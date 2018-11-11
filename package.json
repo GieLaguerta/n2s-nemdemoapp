@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.16.4",
     "nem-library": "^2.0.0-RC3",
     "nem-sdk": "^1.6.7",
     "rxjs": "^5.5.12"

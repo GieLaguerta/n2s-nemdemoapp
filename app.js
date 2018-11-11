@@ -1,9 +1,13 @@
-const nem = require('nem-sdk').default;
+const express = require('express');
+const transfer = require('./src/transfer');
 
-const endpoint = nem.model.objects.create('endpoint')(nem.model.nodes.defaultTestnet, nem.model.nodes.defaultPort);
+const app = express();
 
-nem.com.requests.account.data(endpoint, 'TDF6DIKVZTR5F632VMCIGAUY6L4F3B5IVWJQF5DD').then( function(res) {
-    console.log(res);
-}, function(err) {
-    console.error(err);
+app.listen(3000, () => console.log('server running on port 3000'));
+
+app.use('/transfer/:address/:amount', (req, res, next) => {
+    const address = req.params.address;
+    const amount = req.params.amount;
+
+    transfer.moneyTransfer(address, amount);
 });

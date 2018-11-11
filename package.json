@@ -1,0 +1,16 @@
+{
+  "name": "nemlib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nem-library": "^2.0.0-RC3",
+    "nem-sdk": "^1.6.7",
+    "rxjs": "^5.5.12"
+  }
+}

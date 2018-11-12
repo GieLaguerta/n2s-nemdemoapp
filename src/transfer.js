@@ -11,10 +11,11 @@ const common = nem.model.objects.create('common')(
 );
 
 const tx = {
-    moneyTransfer: function(address, amount) {
+    moneyTransfer: function(address, amount, message) {
         const transferTransaction = nem.model.objects.create('transferTransaction')(
             address,
-            amount
+            amount,
+            ''
         );
 
         const transactionEntity = nem.model.transactions.prepare(
@@ -25,7 +26,9 @@ const tx = {
             );
         nem.model.transactions.send(common, transactionEntity, endpoint).then(function(res) {
             console.log(res);
-        });;
+        }, function(err) {
+            console.log(err);
+        });
     }
 }
 

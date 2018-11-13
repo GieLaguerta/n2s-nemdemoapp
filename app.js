@@ -1,26 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const transfer = require('./src/transfer');
-
+const path = require('path');
 const app = express();
-const port = 3000;
+const userRouter = require('./service/service')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/service', userRouter);
+app.use(express.static('route'));
 
-app.listen(port, function(err) {
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
+app.listen(process.env.PORT || 3000, function(err) {
     if (err) throw err;
-    console.log(`server running on ${port}`);
-});
-
-app.post('/transfer', (req, res, next) => {
-    const address = req.body.address;
-    const amount = req.body.amount;
-
-    transfer.moneyTransfer(address, amount);
-    next();
 });
 
 app.get('/', (req, res) => {
-    res.send('Hello');
+    res.render('index.pug');
 });
+
+module.exports = app;

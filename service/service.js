@@ -25,6 +25,9 @@ router.get('/account', (req, res) => {
     });
 });
 
+//Todo: Invoice for payment due; 
+
+//Todo: Apply loan confrmation depends the value of the collateral
 router.get('/apply', (req, res) => {
      res.redirect('/');
 });

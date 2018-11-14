@@ -18,11 +18,41 @@ router.get('/account', (req, res) => {
     nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
         console.log(result);
         res.json({
-            Account_Address: result.account.address,
-            Account_Balance: result.account.balance
+            acc_address: result.account.address,
+            balance: result.account.balance,
+            vested_balance: result.account.vestedBalance
         });
     }, function(err) {
          console.log(err);
+    });
+});
+
+router.get('/transaction', (req, res) => { // todo: amount, types of asset
+    nem.com.requests.account.transactions.incoming(endpoint, process.env.TEST_ADDRESS).then(function(result) {
+        console.log(result.data[0].transaction.recipient);
+          res.json(
+              result
+          );
+
+        for (let i = 0; i < result.data.length; i++) {
+            const element = result.data[i].transaction.recipient; // transaction recipient
+            console.log(element);
+        }
+
+        for (let i = 0; i < result.data.length; i++) {
+            const element = result.data[i].transaction.timeStamp; // transaction timestamp
+            let dts = nem.utils.format.nemDate(element);
+            console.log(dts);
+            }
+
+        for (let i = 0; i < result.data.length; i++) {
+            const element = result.data[i].transaction.message; // transaction message
+            let fmt = nem.utils.format.hexMessage(element);
+            console.log(fmt);
+        }
+
+    }, function(err) {
+        console.log(err);
     });
 });
 
@@ -50,7 +80,7 @@ router.post('/transfer', (req, res, next) => {
          res.render('index.pug');
     }, function(err) {
         console.log(err);
-    })
+    });
 });
 
 router.get('/success', (req, res) => {

@@ -10,16 +10,17 @@ const endpoint = nem.model.objects.create('endpoint')(
 );
 
 const common = nem.model.objects.create('common')(
-    'Asdqwe123',
-    process.env.TEST_PRIVATE_KEY_N2S
+    process.env.WALLET_PASS,
+    process.env.TEST_PRIVATE_KEY
 );
 
-const address1 = process.env.TEST_ADDRESS_N2S;
-const address2 = process.env.TEST_ADDRESS;
-
 router.get('/account', (req, res) => {
-    nem.com.requests.account.transactions.all(endpoint, address1).then(function(result) {
-        res.json(result);
+    nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
+        console.log(result);
+        res.json({
+            Account_Address: result.account.address,
+            Account_Balance: result.account.balance
+        });
     }, function(err) {
          console.log(err);
     });
@@ -28,16 +29,13 @@ router.get('/account', (req, res) => {
 //Todo: Invoice for payment due; 
 
 //Todo: Apply loan confrmation depends the value of the collateral
-router.get('/apply', (req, res) => {
-     res.redirect('/');
-});
 
-router.post('/apply', (req, res, next) => {
+router.post('/transfer', (req, res, next) => {
     const transferTransaction = nem.model.objects.create(
         'transferTransaction')(
-            address2,
-            1,
-            'Pa apply'
+            req.body.address,
+            req.body.amount,
+            req.body.message
     );
 
     const transactionEntity = nem.model.transactions.prepare(
@@ -47,11 +45,16 @@ router.post('/apply', (req, res, next) => {
             nem.model.network.data.testnet.id
     );
 
-    nem.model.transactions.send(common, transactionEntity, endpoint).then(function(res) {
-        console.log(res);
+    nem.model.transactions.send(common, transactionEntity, endpoint).then(function(result) {
+        //console.log(res);
+         res.render('index.pug');
     }, function(err) {
         console.log(err);
     })
+});
+
+router.get('/success', (req, res) => {
+    res.send('token transfer ok!');
 });
 
 module.exports = router;

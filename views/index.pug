@@ -27,5 +27,8 @@ html
     link(rel='stylesheet', type='text/css', media='screen', href='main.css')
     script(src='main.js')
   body
-    form(action='./service/apply', method='POST')
+    form(action='./service/transfer', method='POST')
+      input(type='text' name='address')
+      input(type='text' name='amount')
+      input(type='text' name='message')
       button(type='submit') Apply

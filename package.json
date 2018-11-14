@@ -16,5 +16,8 @@
     "nem-sdk": "^1.6.7",
     "pug": "^2.0.3",
     "rxjs": "^5.5.12"
+  },
+  "devDependencies": {
+    "typescript": "^3.1.6"
   }
 }

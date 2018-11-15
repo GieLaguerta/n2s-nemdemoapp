@@ -27,31 +27,19 @@ router.get('/account', (req, res) => {
     });
 });
 
-router.get('/transaction', (req, res) => { // todo: amount, types of asset
-    nem.com.requests.account.transactions.incoming(endpoint, process.env.TEST_ADDRESS).then(function(result) {
-        console.log(result.data[0].transaction.recipient);
-          res.json(
-              result
-          );
+router.get('/transactionhistory', (req, res) => { // todo: amount, types of asset
+    nem.com.requests.account.transactions.incoming(endpoint, process.env.TEST_ADDRESS).then(function(result, cb) {
+        let data = [];
 
         for (let i = 0; i < result.data.length; i++) {
-            const element = result.data[i].transaction.recipient; // transaction recipient
-            console.log(element);
+            const recipient = result.data[i].transaction.recipient; // transaction recipient
+            const timeStamp = nem.utils.format.nemDate(result.data[i].transaction.timeStamp); // timestamp
+            const message = nem.utils.format.hexMessage(result.data[i].transaction.message); // message
+            data.push({Recipient: recipient, Date: timeStamp, Message: message});
         }
-
-        for (let i = 0; i < result.data.length; i++) {
-            const element = result.data[i].transaction.timeStamp; // transaction timestamp
-            let dts = nem.utils.format.nemDate(element);
-            console.log(dts);
-            }
-
-        for (let i = 0; i < result.data.length; i++) {
-            const element = result.data[i].transaction.message; // transaction message
-            let fmt = nem.utils.format.hexMessage(element);
-            console.log(fmt);
-        }
-
-    }, function(err) {
+         res.render('index.pug', {data});
+    })
+    .catch(function(err) {
         console.log(err);
     });
 });

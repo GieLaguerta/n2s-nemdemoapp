@@ -32,3 +32,10 @@ html
       input(type='text' name='amount')
       input(type='text' name='message')
       button(type='submit') Apply
+      
+      - var values = {data};
+            ul
+            each val in values.length ? values : ['There are no values']
+                li= val
+
+                p #{data}

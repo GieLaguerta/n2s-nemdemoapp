@@ -14,10 +14,6 @@ const common = nem.model.objects.create('common')(
     process.env.TEST_PRIVATE_KEY
 );
 
-router.get('/dashboard', (req, res) => {
-    res.render('dashboard.pug');
-});
-
 router.get('/account', (req, res) => {
     nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
         console.log(result);
@@ -29,12 +25,16 @@ router.get('/account', (req, res) => {
     }, function(err) {
          console.log(err);
     });
+    console.log(nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS));
 });
 
-router.get('/account/dashboard', (req, res) => { // todo: amount, types of asset
+router.get('/account/loan', (req, res) => {
+    res.render('loan.pug');
+});
+
+router.get('/account/dashboard', (req, res) => {
     nem.com.requests.account.transactions.all(endpoint, process.env.TEST_ADDRESS).then(function(result) {
         let data = [];
-        console.log(result.data[0]);
 
         for (let i = 0; i < result.data.length; i++) {
             const recipient = result.data[i].transaction.recipient; // transaction recipient
@@ -51,15 +51,23 @@ router.get('/account/dashboard', (req, res) => { // todo: amount, types of asset
                 amount
             });
         }
-        const amount = nem.utils.format.nemValue(result.data[0].transaction.amount);
-        const fmt = amount[0] + "." + amount[1];
-        console.log(fmt);
-        res.render('dashboard.pug', {data: data});
-    })
-    .catch(function(err) {
-        console.log(err);
-    });
+        //const amount = nem.utils.format.nemValue(result.data[0].transaction.amount);
+        //const fmt = amount[0] + "." + amount[1];
+        //console.log(fmt);
+        const gb = getBalance();
+        res.render('dashboard.pug', {data});
+    });    
 });
+
+function getBalance(){
+    nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
+        const accBal = result.account.balance;
+        console.log(accBal)
+        return ({accBal});
+    }, function(err) {
+         console.log(err);
+    });
+}
 
 //Todo: Invoice for payment due; 
 

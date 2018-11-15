@@ -4,15 +4,18 @@ html(lang='en')
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(http-equiv='X-UA-Compatible', content='ie=edge')
-    link(type='text/css', rel='stylesheet', href='../public/css/materialize.min.css', media='screen,projection')
-    link(rel='stylesheet', href='../public/css/dashboard.css')
-    link(rel='stylesheet', href='../public/css/loan.css')
-    script(src='../public/js/dashboard.js', defer='')
+    link(rel='stylesheet', href='/css/materialize.min.css', media='screen,projection')
+    link(rel='stylesheet', href='/css/materialize.css', media='screen,projection')
+    link(rel='stylesheet', href='/css/dashboard.css')
+    link(rel='stylesheet', href='/css/loan.css')
+    script(src='/js/dashboard.js', defer)
     script(src='https://code.jquery.com/jquery-3.3.1.min.js', integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=', crossorigin='anonymous')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
     title dashboard/Nts
   body
-    #show
+    //-#show
+    include ./include/nav.pug
+    
     main
       .row
         .col.s6
@@ -26,9 +29,6 @@ html(lang='en')
                   i.indigo-text.text-lighten-1.large.material-icons format_bold
                   span.indigo-text.text-lighten-1
                     h5 Balance
-              //
-                <div class="col s1">&nbsp;</div>
-                <div class="col s1">&nbsp;</div>
               .col.s1  
               a(href='#!')
                 .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')
@@ -70,8 +70,9 @@ html(lang='en')
             td= item.message
             td= item.txType
             td= item.amount
-    // footer
-    #footer
+    //- // footer
+    //- #footer
+    include ./include/footer.pug
     script.
       // sidebar
       $(document).ready(function(){
@@ -81,4 +82,5 @@ html(lang='en')
       $(document).ready(function(){
       $('.modal').modal();
       });
+
     script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')

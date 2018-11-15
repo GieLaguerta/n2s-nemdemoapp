@@ -1,0 +1,10 @@
+table.striped {
+    width: 90%;
+    margin: 20px auto;
+    background: #e7e7e7;
+    border-radius: 5px;
+}
+
+.nav {
+    margin-bottom: 50px;
+}

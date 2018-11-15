@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css?family=Cardo|Work+Sans:300');
+*{
+    margin:0;
+    padding:0;
+}
+
+.card a {
+    color: #f4f4f4 !important;
+}
+
+img.logo {
+    width: 70px;
+    height: 70px;
+}
+
+.nav{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 1%;
+}
+
+.nav li.material-icons {
+    color:#00b8d4 ;
+    background: #e0f7fa ;
+    border-radius: 2px;
+    opacity: 0.9;
+}
+
+li.material-icons{
+    font-size: 40px;
+    color:#333;
+    margin-top: 13px;
+}
+
+.main {
+    width: 80%;
+    margin: 50px auto;
+}
+
+img {
+    border-radius: 5px;
+    width: 100%;
+}
+
+.modal {
+    width: 80% !important;
+    height: 800px !important;
+}
+
+.modal .col img {
+    height: 200px;
+}
+
+.col p.flow-text{
+    color: #000;
+    background: #fff;
+    opacity: 0.7;
+    font-weight: bolder;
+    padding: 0 5px;
+}
+
+#terms {
+    height: 300px;
+    overflow: scroll;
+}
+
+footer img {
+    width: 200px;
+    margin-top: -20px;
+}
+
+footer h5 {
+    margin-bottom: 20px;
+}
+
+/* media query */
+
+@media screen and (max-width:800px) {
+    .col {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 auto;
+    }
+}

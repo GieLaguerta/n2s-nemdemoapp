@@ -1,0 +1,30 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: url('../img/registration.jpg') no-repeat center !important;
+    background-size: cover !important;
+    height: 100vh;
+}
+.bg-opacity {
+    background: #333;
+    position: absolute;
+    top: 0;
+    opacity: 0.3;
+    height: 120vh;
+    width: 100%;
+}
+
+form {
+    padding: 5% 5%;
+    margin-top:80px;
+    margin-bottom: 0;
+    border-radius: 10px;
+    opacity: 0.9;
+}
+
+.datepicker {
+    margin-top: -6px !important;
+}

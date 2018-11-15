@@ -14,6 +14,10 @@ const common = nem.model.objects.create('common')(
     process.env.TEST_PRIVATE_KEY
 );
 
+router.get('/dashboard', (req, res) => {
+    res.render('dashboard.pug');
+});
+
 router.get('/account', (req, res) => {
     nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
         console.log(result);
@@ -27,17 +31,30 @@ router.get('/account', (req, res) => {
     });
 });
 
-router.get('/transactionhistory', (req, res) => { // todo: amount, types of asset
-    nem.com.requests.account.transactions.incoming(endpoint, process.env.TEST_ADDRESS).then(function(result, cb) {
+router.get('/account/dashboard', (req, res) => { // todo: amount, types of asset
+    nem.com.requests.account.transactions.all(endpoint, process.env.TEST_ADDRESS).then(function(result) {
         let data = [];
+        console.log(result.data[0]);
 
         for (let i = 0; i < result.data.length; i++) {
             const recipient = result.data[i].transaction.recipient; // transaction recipient
             const timeStamp = nem.utils.format.nemDate(result.data[i].transaction.timeStamp); // timestamp
             const message = nem.utils.format.hexMessage(result.data[i].transaction.message); // message
-            data.push({Recipient: recipient, Date: timeStamp, Message: message});
+            const txType = nem.utils.format.txTypeToName(result.data[i].transaction.type); // transaction type
+            const amount = nem.utils.format.nemValue(result.data[i].transaction.amount); // amount
+            //const fmt = fmt[0] + "." + fmt[1];
+            data.push({
+                recipient,
+                timeStamp,
+                message,
+                txType,
+                amount
+            });
         }
-         res.render('index.pug', {data});
+        const amount = nem.utils.format.nemValue(result.data[0].transaction.amount);
+        const fmt = amount[0] + "." + amount[1];
+        console.log(fmt);
+        res.render('dashboard.pug', {data: data});
     })
     .catch(function(err) {
         console.log(err);
@@ -69,10 +86,6 @@ router.post('/transfer', (req, res, next) => {
     }, function(err) {
         console.log(err);
     });
-});
-
-router.get('/success', (req, res) => {
-    res.send('token transfer ok!');
 });
 
 module.exports = router;

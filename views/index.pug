@@ -1,41 +1,65 @@
-<!--<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="main.js"></script>
-</head>
-<body>
-    <form action="/src/transfer.js" method="POST">
-        <input type="text" name="address"><br>
-        <input type="text" name="amount"><br>
-        <button type="submit"></button>
-    </form>
-</body>
-</html> -->
-
 doctype html
-html
+html(lang='en')
   head
-    meta(charset='utf-8')
-    meta(http-equiv='X-UA-Compatible', content='IE=edge')
-    title Page Title
-    meta(name='viewport', content='width=device-width, initial-scale=1')
-    link(rel='stylesheet', type='text/css', media='screen', href='main.css')
-    script(src='main.js')
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    // Compiled and minified CSS
+    link(type='text/css', rel='stylesheet', href='css/materialize.min.css', media='screen,projection')
+    link(rel='stylesheet', href='css/index.css')
+    script(src='https://code.jquery.com/jquery-3.3.1.min.js', integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=', crossorigin='anonymous')
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+    title Document
   body
-    form(action='./service/transfer', method='POST')
-      input(type='text' name='address')
-      input(type='text' name='amount')
-      input(type='text' name='message')
-      button(type='submit') Apply
-      
-      - var values = {data};
-            ul
-            each val in values.length ? values : ['There are no values']
-                li= val
-
-                p #{data}
+    .bg-opacity
+    .nav.cyan.lighten-2
+      // navbar content here
+      a.sidenav-trigger(href='#', data-target='slide-out')
+        li.material-icons menu
+      img.logo(src='img/nts.png')
+    ul#slide-out.sidenav
+      li
+        a(href='#!')
+          i.material-icons home
+          | Home
+      li
+        .divider
+      li
+        a(href='#!')
+          i.material-icons redeem
+          | My account
+      li
+        a(href='#!')
+          i.material-icons timeline
+          | Transaction History
+      li
+        a(href='#!')
+          i.material-icons business_center
+          | Loan
+    form.grey.lighten-5
+      .input-field
+        i.material-icons.prefix account_circle
+        input#icon_prefix.validate(type='text')
+        label(for='icon_prefix') Enter Account Number
+      .input-field
+        i.material-icons.prefix vpn_key
+        input#icon_password.validate(type='password')
+        label(for='icon_password') Enter Password
+      center
+        button.sign-in.btn.btn-large.cyan.darken-1
+          i.material-icons.left input
+          |  Sign-in
+    // Compiled and minified JavaScript
+    script.
+      document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.sidenav');
+      var instances = M.Sidenav.init(elems, options);
+      });
+      // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
+      // var collapsibleElem = document.querySelector('.collapsible');
+      // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
+      // Or with jQuery
+      $(document).ready(function(){
+      $('.sidenav').sidenav();
+      });
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')

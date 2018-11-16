@@ -26,7 +26,8 @@ html(lang='en')
             .row
               a(href='#!')
                 .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')
-                  i.indigo-text.text-lighten-1.large.material-icons format_bold
+                  span.indigo-text.text-lighten-1
+                    h6 Test
                   span.indigo-text.text-lighten-1
                     h5 Balance
               .col.s1  
@@ -57,11 +58,11 @@ html(lang='en')
       table.striped.highlight.z-depth-2
         thead
           tr
+            th Account
             th Date
-            th type transaction
-            th Balance
-            th Interest
-            th Amount transfer
+            th Message
+            th Type
+            th Amount
         tbody
         each item in data
           tr

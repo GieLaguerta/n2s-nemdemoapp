@@ -27,14 +27,15 @@ router.post('/login', (req, res) => {
     User.findOne({ username: req.body.username, password: req.body.password}, function(err, user) {        
         const userWalletAddress = user.get('wallet_address');
         const username = user.get('username');
+        const hash = user.get('txHash')
         //console.log(userWalletAddress);
         if (!user) {
             res.sendStatus(404);
             return;
         }
-
+        // fetch all transactions of account
         nem.com.requests.account.transactions.all(endpoint, userWalletAddress).then(function(result) {
-            const message = result.data[0].transaction.message.payload;
+            //const message = result.data[0].transaction.message.payload;
 
             data.push({
                 username,
@@ -58,38 +59,22 @@ router.post('/login', (req, res) => {
                 });
             }
             console.log(data);
-            //res.render('dashboard.pug', { data });
-
+            // fetch account's balance
             nem.com.requests.account.data(endpoint, userWalletAddress).then(function(result) {
                 const accountBalance = result.account.balance;
-                console.log(result.account.balance);
                 dataTx.push({
                     accountBalance
-                })
-                res.render('dashboard.pug', { data: data, dataTx: dataTx });
+                });
+                // fetch user info by hash
+                const searchEnabledEndpoint = nem.model.objects.create('endpoint')(nem.model.nodes.searchOnTestnet[0].uri, nem.model.nodes.defaultPort);
+                nem.com.requests.transaction.byHash(searchEnabledEndpoint, hash).then(function(result) {
+                    console.log(result.transaction.message.payload);
+                    const hashData = result.transaction.message.payload; // to decrypt for users id send to dashboard
+                    res.render('dashboard.pug', { data: data, dataTx: dataTx });
+                });
             });
         });
     });
-    //insert transaction history in array
-    /*nem.com.requests.account.transactions.all(endpoint, data[0].userInfo.wallet_address).then(function(result) {
-        for (let i = 0; i < result.data.length; i++) {
-            
-            const recipient = result.data[i].transaction.recipient; // transaction recipient
-            const timeStamp = nem.utils.format.nemDate(result.data[i].transaction.timeStamp); // timestamp
-            const message = nem.utils.format.hexMessage(result.data[i].transaction.message); // message
-            const txType = nem.utils.format.txTypeToName(result.data[i].transaction.type); // transaction type
-            const amount = nem.utils.format.nemValue(result.data[i].transaction.amount); // amount
-            //const fmt = fmt[0] + "." + fmt[1];
-            data.push({ userTransaction: {
-                recipient: recipient,
-                timeStamp: timeStamp,
-                message: message,
-                txType: txType,
-                amount: amount
-            }
-            });
-        }
-    });*/
 });
 
 router.get('/account', (req, res) => {

@@ -21,33 +21,54 @@ const common = nem.model.objects.create('common')(
 //});
 
 router.post('/login', (req, res) => {
-    
+    let data = [];
     let dataTx = [];
 
-    User.findOne({ username: req.body.username, password: req.body.password}, function(err, user) {
-        let data = [];
-        
+    User.findOne({ username: req.body.username, password: req.body.password}, function(err, user) {        
         const userWalletAddress = user.get('wallet_address');
         const username = user.get('username');
         //console.log(userWalletAddress);
-        if (!user.length) {
+        if (!user) {
             res.sendStatus(404);
             return;
         }
 
-        // insert username and wallet address in array
-        data.push({ userInfo: {
-            username: user.get('username'),
-            wallet_address: user.get('wallet_address')}
-        });
-
         nem.com.requests.account.transactions.all(endpoint, userWalletAddress).then(function(result) {
-            //console.log(result.data[0].transaction.message);
             const message = result.data[0].transaction.message.payload;
-            return message;
+
+            data.push({
+                username,
+                userWalletAddress
+            });
+
+            for (let i = 0; i < result.data.length; i++) {
+            
+                const recipient = result.data[i].transaction.recipient; // transaction recipient
+                const timeStamp = nem.utils.format.nemDate(result.data[i].transaction.timeStamp); // timestamp
+                const message = nem.utils.format.hexMessage(result.data[i].transaction.message); // message
+                const txType = nem.utils.format.txTypeToName(result.data[i].transaction.type); // transaction type
+                const amount = nem.utils.format.nemValue(result.data[i].transaction.amount); // amount
+                //const fmt = fmt[0] + "." + fmt[1];
+                data.push({
+                    recipient,
+                    timeStamp,
+                    message,
+                    txType,
+                    amount
+                });
+            }
+            console.log(data);
+            //res.render('dashboard.pug', { data });
+
+            nem.com.requests.account.data(endpoint, userWalletAddress).then(function(result) {
+                const accountBalance = result.account.balance;
+                console.log(result.account.balance);
+                dataTx.push({
+                    accountBalance
+                })
+                res.render('dashboard.pug', { data: data, dataTx: dataTx });
+            });
         });
-        
-        res.json(data);
     });
     //insert transaction history in array
     /*nem.com.requests.account.transactions.all(endpoint, data[0].userInfo.wallet_address).then(function(result) {
@@ -199,7 +220,7 @@ router.post('/register', (req, res) => {
         // save user, password, wallet address, publikey, privatekey, hash of the digital identity
         const user = new User({
             username: 'mrgxsy',
-            password: 'Asdqwe123',
+            password: 'asdqwe123',
             wallet_address: data[0].walletAddress,
             publicKey: data[0].publicKey,
             privateKey: data[0].privateKey,

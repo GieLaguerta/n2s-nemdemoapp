@@ -27,9 +27,11 @@ html(lang='en')
               a(href='#!')
                 .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')
                   span.indigo-text.text-lighten-1
-                    h6 Test
+                    each item in dataTx
+                       h5 #{item.accountBalance} XEM
                   span.indigo-text.text-lighten-1
-                    h5 Balance
+                    each item in dataTx
+                       h5 Balance
               .col.s1  
               a(href='#!')
                 .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')

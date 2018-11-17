@@ -13,7 +13,7 @@ html(lang='en')
   body
     .bg-opacity
     .container
-      form.grey.lighten-3
+      form.grey.lighten-3(method="post" action="/service/register")
         .row
           blockquote.flow-text Basic Information
           .input-field.col.s4
@@ -56,7 +56,7 @@ html(lang='en')
               option(value='2') Cavite
               option(value='2') Laguna
             label Province
-        button.btn.waves-effect.waves-light.right-align(type='submit', name='action')
+        button.btn.waves-effect.waves-light.right-align
           | Submit
           i.material-icons.right send
     script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')

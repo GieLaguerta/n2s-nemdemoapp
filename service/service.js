@@ -14,6 +14,11 @@ const common = nem.model.objects.create('common')(
     process.env.TEST_PRIVATE_KEY
 );
 
+/* login */
+router.get('/login', (req, res) => {
+    res.render('index.pug');
+});
+
 router.get('/account', (req, res) => {
     nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
         console.log(result);
@@ -34,8 +39,7 @@ router.get('/account/loan', (req, res) => {
 
 router.get('/account/dashboard', (req, res) => {
     let data = [];
-    let dataMosaic = [];
-    let accInfo = [];
+    let sampleData = [];
 
     nem.com.requests.account.transactions.all(endpoint, process.env.TEST_ADDRESS).then(function(result) {
         
@@ -54,6 +58,13 @@ router.get('/account/dashboard', (req, res) => {
                 txType,
                 amount
             });
+            sampleData.push({acc_tx:
+                recipient,
+                timeStamp,
+                message,
+                txType,
+                amount
+            });
         }
 
         /*nem.com.requests.account.mosaics.owned(endpoint, process.env.TEST_ADDRESS).then(function(result) {
@@ -62,18 +73,23 @@ router.get('/account/dashboard', (req, res) => {
             }
             console.log(dataMosaic);
         });*/
-
-        nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
-            accInfo.push(result.account.balance);
-        });
-
         //const amount = nem.utils.format.nemValue(result.data[0].transaction.amount);
         //const fmt = amount[0] + "." + amount[1];
         //console.log(fmt);
         res.render('dashboard.pug', {
             data
         });
+        //console.log(sampleData);
+    }, function(err) {
+        console.log(err);
     });
+
+    nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
+        return sampleData.push({acc_data: result});
+    }, function(err) {
+        console.log(err);
+    });
+
 });
 
 function getAsset(){
@@ -110,22 +126,18 @@ router.post('/transfer', (req, res, next) => {
     });
 });
 
-
-router.get('/register', (req, res) => {
-    res.send('/');
-});
-
 router.post('/register', (req, res) => {
     const accountData = {
-        name: 'oliver',
-        lastname: 'escosura',
-        gender: 'male',
-    }
+        name: req.body.name,
+        lastname: req.body.lastname,
+        gender: req.body.gender,
+        contact: req.body.contact
+    };
 
     const transferTransaction = nem.model.objects.create('transferTransaction')(
         'TDG4ELTTDM4PZWF5P7BKRXFUEEGM3VEUEZ765EI5',
         0,
-        accountData
+        JSON.stringify(accountData)
     );
 
     const transactionEntity = nem.model.transactions.prepare('transferTransaction')(
@@ -135,11 +147,42 @@ router.post('/register', (req, res) => {
     );
 
     nem.model.transactions.send(common, transactionEntity, endpoint).then(function(result) {
-          res.send(result);
-          //res.render('index.pug');
+        //res.send(result);
+        console.log(result);
+        res.render('index.pug');
     }, function(err) {
         console.log(err);
     });
+
+    /*let data = [];
+    nem.com.requests.account.transactions.all(endpoint, process.env.TEST_ADDRESS).then(function(result) {
+        
+
+        for (let i = 0; i < result.data.length; i++) {
+            const recipient = result.data[i].transaction.recipient; // transaction recipient
+            const timeStamp = nem.utils.format.nemDate(result.data[i].transaction.timeStamp); // timestamp
+            const message = nem.utils.format.hexMessage(result.data[i].transaction.message); // message
+            const txType = nem.utils.format.txTypeToName(result.data[i].transaction.type); // transaction type
+            const amount = nem.utils.format.nemValue(result.data[i].transaction.amount); // amount
+            //const fmt = fmt[0] + "." + fmt[1];
+            data.push({
+                recipient,
+                timeStamp,
+                message,
+                txType,
+                amount
+            });
+        }
+        //const amount = nem.utils.format.nemValue(result.data[0].transaction.amount);
+        //const fmt = amount[0] + "." + amount[1];
+        //console.log(fmt);
+        res.render('dashboard.pug', {
+            data
+        });
+        //console.log(sampleData);
+    }, function(err) {
+        console.log(err);
+    });*/
 });
 
 
@@ -147,13 +190,13 @@ router.post('/register', (req, res) => {
 const txHash = '2d1ed876eb12f1f9177c14277c26b6a27cfce991f6410e8341459c69e1728788';
 const searchEnabledEndpoint = nem.model.objects.create("endpoint")(nem.model.nodes.searchOnTestnet[0].uri, nem.model.nodes.defaultPort);
 nem.com.requests.transaction.byHash(searchEnabledEndpoint, txHash).then(function(res) {
+    let message = [];
 	console.log("\nTransaction data:");
     console.log(res.transaction.message.payload);
     
     //return decrypt message as hex
-    console.log(nem.crypto.helpers.decode('0bd87d8bebb48799aac5634d19fe7715a47100a386aa22d4ce54fd004eb069ae', '57f91da1bba7c499bb990dc7bd08608d44a9e5a2c10f3fc6d7bc36e7b226b65b', res.transaction.message.payload));
-    
-   // console.log(userData);
+    message.push(nem.crypto.helpers.decode('0bd87d8bebb48799aac5634d19fe7715a47100a386aa22d4ce54fd004eb069ae', '57f91da1bba7c499bb990dc7bd08608d44a9e5a2c10f3fc6d7bc36e7b226b65b', res.transaction.message.payload));
+   console.log(nem.utils.format.hexMessage(message));
 }, function(err) {
 	console.error(err);
 });
@@ -161,6 +204,11 @@ nem.com.requests.transaction.byHash(searchEnabledEndpoint, txHash).then(function
 
 
 /*  todo create nano wallet <- private key <- address <- send to main wallet <- saved hash, address, privatekey to database */
+route.get('/newwallet', (req, res) => {
+    const walletName = 'olvresc';
+    const walletPass = 'Asdqwe123';
+    
+});
 
 
 

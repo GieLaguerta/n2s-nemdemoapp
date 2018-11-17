@@ -21,29 +21,33 @@ const common = nem.model.objects.create('common')(
 //});
 
 router.post('/login', (req, res) => {
-    let data = [];
-    User.findOne({ username: req.body.username, password: req.body.password}, function(err, result) {
-        const userWalletAddress = result.get('wallet_address');
+    
+    let dataTx = [];
+
+    User.findOne({ username: req.body.username, password: req.body.password}, function(err, user) {
+        let data = [];
+        
+        const userWalletAddress = user.get('wallet_address');
+        const username = user.get('username');
         //console.log(userWalletAddress);
-        if (!result) {
+        if (!user.length) {
             res.sendStatus(404);
+            return;
         }
 
         // insert username and wallet address in array
         data.push({ userInfo: {
-        username: result.get('username'),
-        wallet_address: result.get('wallet_address')}
+            username: user.get('username'),
+            wallet_address: user.get('wallet_address')}
         });
 
         nem.com.requests.account.transactions.all(endpoint, userWalletAddress).then(function(result) {
             //console.log(result.data[0].transaction.message);
-            data.concat({ userTx: {
-                message: result.data[0].transaction.message
-            }
-            });
+            const message = result.data[0].transaction.message.payload;
+            return message;
         });
-        console.log(data);
-        return res.json(data);
+        
+        res.json(data);
     });
     //insert transaction history in array
     /*nem.com.requests.account.transactions.all(endpoint, data[0].userInfo.wallet_address).then(function(result) {

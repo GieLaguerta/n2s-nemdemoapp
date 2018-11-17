@@ -126,16 +126,29 @@ router.post('/transfer', (req, res, next) => {
     });
 });
 
+/*  todo create nano wallet <- private key <- address <- send to main wallet <- saved hash, address, privatekey to database */
+router.get('/register', (req, res) => {
+    res.render('registration.pug');
+});
+
 router.post('/register', (req, res) => {
+    // Saved to database privatekey, address, transaction hash
+    const rBytes = nem.crypto.nacl.randomBytes(32); // random bytes from PRNG
+    const privateKey = nem.utils.convert.ua2hex(rBytes); // convert random bytes to hex
+    const keyPair = nem.crypto.keyPair.create(privateKey);
+    const publicKey = keyPair.publicKey.toString(); // to save to database
+    const address = nem.model.address.toAddress(publicKey, nem.model.network.data.testnet.id);
+    
+    // Send to user
     const accountData = {
         name: req.body.name,
-        lastname: req.body.lastname,
-        gender: req.body.gender,
-        contact: req.body.contact
+        lastname: req.body.las,
+        contact: req.body.contact,
+        wallet_address: address
     };
 
     const transferTransaction = nem.model.objects.create('transferTransaction')(
-        'TDG4ELTTDM4PZWF5P7BKRXFUEEGM3VEUEZ765EI5',
+        address,
         0,
         JSON.stringify(accountData)
     );
@@ -147,71 +160,12 @@ router.post('/register', (req, res) => {
     );
 
     nem.model.transactions.send(common, transactionEntity, endpoint).then(function(result) {
-        //res.send(result);
-        console.log(result);
-        res.render('index.pug');
+        res.send(result.transactionHash.data);
+        //res.render('index.pug');
     }, function(err) {
         console.log(err);
     });
-
-    /*let data = [];
-    nem.com.requests.account.transactions.all(endpoint, process.env.TEST_ADDRESS).then(function(result) {
-        
-
-        for (let i = 0; i < result.data.length; i++) {
-            const recipient = result.data[i].transaction.recipient; // transaction recipient
-            const timeStamp = nem.utils.format.nemDate(result.data[i].transaction.timeStamp); // timestamp
-            const message = nem.utils.format.hexMessage(result.data[i].transaction.message); // message
-            const txType = nem.utils.format.txTypeToName(result.data[i].transaction.type); // transaction type
-            const amount = nem.utils.format.nemValue(result.data[i].transaction.amount); // amount
-            //const fmt = fmt[0] + "." + fmt[1];
-            data.push({
-                recipient,
-                timeStamp,
-                message,
-                txType,
-                amount
-            });
-        }
-        //const amount = nem.utils.format.nemValue(result.data[0].transaction.amount);
-        //const fmt = amount[0] + "." + amount[1];
-        //console.log(fmt);
-        res.render('dashboard.pug', {
-            data
-        });
-        //console.log(sampleData);
-    }, function(err) {
-        console.log(err);
-    });*/
 });
-
-
-// search account by hash
-const txHash = '2d1ed876eb12f1f9177c14277c26b6a27cfce991f6410e8341459c69e1728788';
-const searchEnabledEndpoint = nem.model.objects.create("endpoint")(nem.model.nodes.searchOnTestnet[0].uri, nem.model.nodes.defaultPort);
-nem.com.requests.transaction.byHash(searchEnabledEndpoint, txHash).then(function(res) {
-    let message = [];
-	console.log("\nTransaction data:");
-    console.log(res.transaction.message.payload);
-    
-    //return decrypt message as hex
-    message.push(nem.crypto.helpers.decode('0bd87d8bebb48799aac5634d19fe7715a47100a386aa22d4ce54fd004eb069ae', '57f91da1bba7c499bb990dc7bd08608d44a9e5a2c10f3fc6d7bc36e7b226b65b', res.transaction.message.payload));
-   console.log(nem.utils.format.hexMessage(message));
-}, function(err) {
-	console.error(err);
-});
-
-
-
-/*  todo create nano wallet <- private key <- address <- send to main wallet <- saved hash, address, privatekey to database */
-route.get('/newwallet', (req, res) => {
-    const walletName = 'olvresc';
-    const walletPass = 'Asdqwe123';
-    
-});
-
-
-
 
 module.exports = router;
 

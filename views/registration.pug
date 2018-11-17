@@ -17,13 +17,13 @@ html(lang='en')
         .row
           blockquote.flow-text Basic Information
           .input-field.col.s4
-            input#firstname.validate(type='text')
+            input#firstname.validate(type='text' name="name")
             label(for='firstname') First Name
           .input-field.col.s4
             input#middlename.validate(type='text')
             label(for='middlename') Middle Name
           .input-field.col.s4
-            input#lastname.validate(type='text')
+            input#lastname.validate(type='text' name="lastname")
             label(for='lastname') Last Name
         .row
           .input-field.col.s4
@@ -36,7 +36,7 @@ html(lang='en')
             option(value='', disabled='', selected='') Birth Date
             input.datepicker(type='text')
           .input-field.col.s4
-            input#phone.validate(type='number')
+            input#phone.validate(type='number' name="contact")
             label(for='phone') Phone number
         .row
           h6.flow-text Address

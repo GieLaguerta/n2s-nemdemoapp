@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const nem = require('nem-sdk').default;
+const User = require('../model/userModel');
 
 require('dotenv').config();
 
@@ -17,6 +18,15 @@ const common = nem.model.objects.create('common')(
 /* login */
 router.get('/login', (req, res) => {
     res.render('index.pug');
+});
+
+router.post('/login', (req, res) => {
+    User.find({username: req.body.username, password: req.body.password}, function(err, result) {
+        if(err) {
+            res.send(err);
+        }
+         res.send('Uy!!!');
+    });
 });
 
 router.get('/account', (req, res) => {
@@ -66,16 +76,6 @@ router.get('/account/dashboard', (req, res) => {
                 amount
             });
         }
-
-        /*nem.com.requests.account.mosaics.owned(endpoint, process.env.TEST_ADDRESS).then(function(result) {
-            for (let i = 0; i < result.data.length; i++) {
-                dataMosaic.push(result.data[i]);
-            }
-            console.log(dataMosaic);
-        });*/
-        //const amount = nem.utils.format.nemValue(result.data[0].transaction.amount);
-        //const fmt = amount[0] + "." + amount[1];
-        //console.log(fmt);
         res.render('dashboard.pug', {
             data
         });
@@ -91,13 +91,6 @@ router.get('/account/dashboard', (req, res) => {
     });
 
 });
-
-function getAsset(){
-    nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
-        return result.account.balance;
-    });
-}
-
 
 //Todo: Invoice for payment due; 
 
@@ -132,6 +125,7 @@ router.get('/register', (req, res) => {
 });
 
 router.post('/register', (req, res) => {
+    let data = [];
     // Saved to database privatekey, address, transaction hash
     const rBytes = nem.crypto.nacl.randomBytes(32); // random bytes from PRNG
     const privateKey = nem.utils.convert.ua2hex(rBytes); // convert random bytes to hex
@@ -160,7 +154,31 @@ router.post('/register', (req, res) => {
     );
 
     nem.model.transactions.send(common, transactionEntity, endpoint).then(function(result) {
-        res.send(result.transactionHash.data);
+        data.push({
+            walletAddress: address,
+            publicKey: publicKey,
+            privateKey: privateKey,
+            txHash: result.transactionHash.data,
+        });
+        res.json(data);
+
+        // save user, password, wallet address, publikey, privatekey, hash of the digital identity
+        const user = new User({
+            username: 'test1',
+            password: 'test',
+            wallet_address: data[0].walletAddress,
+            publicKey: data[0].publicKey,
+            privateKey: data[0].privateKey,
+            txHash: data[0].txHash
+        });
+        user.save(function(err) {
+            if(err) console.log(err);
+            console.log('user registration success');
+        });
+
+        User.find({}, function(err, result) {
+            console.log(result);
+        });
         //res.render('index.pug');
     }, function(err) {
         console.log(err);

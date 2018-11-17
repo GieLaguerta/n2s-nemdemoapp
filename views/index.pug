@@ -36,14 +36,14 @@ html(lang='en')
         a(href='#!')
           i.material-icons business_center
           | Loan
-    form.grey.lighten-5(method="post" action="service/register")
+    form.grey.lighten-5(method="post" action="service/login")
       .input-field
         i.material-icons.prefix account_circle
-        input#icon_prefix.validate(type='text')
-        label(for='icon_prefix') Enter Account Number
+        input#icon_prefix.validate(type='text' name="username")
+        label(for='icon_prefix') Enter Username
       .input-field
         i.material-icons.prefix vpn_key
-        input#icon_password.validate(type='password')
+        input#icon_password.validate(type='password' name="password")
         label(for='icon_password') Enter Password
       center
         button.sign-in.btn.btn-large.cyan.darken-1

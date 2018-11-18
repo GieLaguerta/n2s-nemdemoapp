@@ -68,9 +68,10 @@ router.post('/login', (req, res) => {
                 // fetch user info by hash
                 const searchEnabledEndpoint = nem.model.objects.create('endpoint')(nem.model.nodes.searchOnTestnet[0].uri, nem.model.nodes.defaultPort);
                 nem.com.requests.transaction.byHash(searchEnabledEndpoint, hash).then(function(result) {
-                    console.log(result.transaction.message.payload);
+                    const userInfo = JSON.parse(nem.utils.format.hexMessage(result.transaction.message));
+                    console.log(userInfo.wallet_address);
                     const hashData = result.transaction.message.payload; // to decrypt for users id send to dashboard
-                    res.render('dashboard.pug', { data: data, dataTx: dataTx });
+                    res.render('dashboard.pug', { data: data, dataTx: dataTx , userInfo: userInfo});
                 });
             });
         });
@@ -204,7 +205,7 @@ router.post('/register', (req, res) => {
 
         // save user, password, wallet address, publikey, privatekey, hash of the digital identity
         const user = new User({
-            username: 'mrgxsy',
+            username: 'juan',
             password: 'asdqwe123',
             wallet_address: data[0].walletAddress,
             publicKey: data[0].publicKey,

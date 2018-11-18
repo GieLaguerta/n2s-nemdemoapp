@@ -22,7 +22,9 @@ html(lang='en')
           .card.z-depth-3(style='padding: 35px;', align='center')
             .row
               .left.card-title
-                b.flow-text Loan
+                b.flow-text Welcome, #{userInfo.name}
+                br
+                | Wallet Address: #{userInfo.wallet_address}
             .row
               a(href='#!')
                 .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')

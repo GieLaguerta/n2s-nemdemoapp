@@ -20,27 +20,27 @@ const common = nem.model.objects.create('common')(
 //    res.render('index.pug');
 //});
 
-router.post('/login', (req, res) => {
+router.post('/account/dashboard', (req, res) => {
     let data = [];
     let dataTx = [];
 
     User.findOne({ username: req.body.username, password: req.body.password}, function(err, user) {        
+        
+        //console.log(userWalletAddress);
+        if (!user) return res.sendStatus(404);
+
         const userWalletAddress = user.get('wallet_address');
         const username = user.get('username');
-        const hash = user.get('txHash')
-        //console.log(userWalletAddress);
-        if (!user) {
-            res.sendStatus(404);
-            return;
-        }
+        const hash = user.get('txHash');
+
         // fetch all transactions of account
         nem.com.requests.account.transactions.all(endpoint, userWalletAddress).then(function(result) {
             //const message = result.data[0].transaction.message.payload;
 
-            data.push({
+            /*data.push({
                 username,
                 userWalletAddress
-            });
+            });*/
 
             for (let i = 0; i < result.data.length; i++) {
             
@@ -48,8 +48,8 @@ router.post('/login', (req, res) => {
                 const timeStamp = nem.utils.format.nemDate(result.data[i].transaction.timeStamp); // timestamp
                 const message = nem.utils.format.hexMessage(result.data[i].transaction.message); // message
                 const txType = nem.utils.format.txTypeToName(result.data[i].transaction.type); // transaction type
-                const amount = nem.utils.format.nemValue(result.data[i].transaction.amount); // amount
-                //const fmt = fmt[0] + "." + fmt[1];
+                const fmt = nem.utils.format.nemValue(result.data[i].transaction.amount); // amount
+                const amount = fmt[0] + "." + fmt[1];
                 data.push({
                     recipient,
                     timeStamp,
@@ -61,7 +61,8 @@ router.post('/login', (req, res) => {
             console.log(data);
             // fetch account's balance
             nem.com.requests.account.data(endpoint, userWalletAddress).then(function(result) {
-                const accountBalance = result.account.balance;
+                const fmt = nem.utils.format.nemValue(result.account.balance);
+                const accountBalance = fmt[0] + "." + fmt[1];
                 dataTx.push({
                     accountBalance
                 });
@@ -71,14 +72,18 @@ router.post('/login', (req, res) => {
                     const userInfo = JSON.parse(nem.utils.format.hexMessage(result.transaction.message));
                     console.log(userInfo.wallet_address);
                     const hashData = result.transaction.message.payload; // to decrypt for users id send to dashboard
-                    res.render('dashboard.pug', { data: data, dataTx: dataTx , userInfo: userInfo});
+
+                    nem.com.requests.account.mosaics.owned(endpoint, userWalletAddress).then(function(result) {
+                        console.log(result.data[1]);
+                        res.render('dashboard.pug', { data: data, dataTx: dataTx , userInfo: userInfo});
+                    });
                 });
             });
         });
     });
 });
 
-router.get('/account', (req, res) => {
+/*router.get('/account', (req, res) => {
     nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS).then(function(result) {
         console.log(result);
         res.json({
@@ -90,17 +95,18 @@ router.get('/account', (req, res) => {
          console.log(err);
     });
     console.log(nem.com.requests.account.data(endpoint, process.env.TEST_ADDRESS));
-});
+});*/
 
 router.get('/account/loan', (req, res) => {
     res.render('loan.pug');
 });
 
 router.get('/account/dashboard', (req, res) => {
-    let data = [];
+    res.render('dashboard.pug');
+    /*let data = [];
 
     nem.com.requests.account.transactions.all(endpoint, process.env.TEST_ADDRESS).then(function(result) {
-        
+        console.log(result.data);
 
         for (let i = 0; i < result.data.length; i++) {
             const recipient = result.data[i].transaction.recipient; // transaction recipient
@@ -129,8 +135,7 @@ router.get('/account/dashboard', (req, res) => {
         return sampleData.push({acc_data: result});
     }, function(err) {
         console.log(err);
-    });
-
+    });*/
 });
 
 //Todo: Invoice for payment due; 
@@ -177,8 +182,14 @@ router.post('/register', (req, res) => {
     // Send to user
     const accountData = {
         name: req.body.name,
-        lastname: req.body.las,
+        middle_name: req.body.middle_name,
+        lastname: req.body.lastname,
         contact: req.body.contact,
+        gender: req.body.gender,
+        email: req.body.email,
+        address: req.body.address,
+        valid_id: req.body.valid_id,
+        valid_id_no: req.body.valid_id_no,
         wallet_address: address
     };
 
@@ -205,8 +216,8 @@ router.post('/register', (req, res) => {
 
         // save user, password, wallet address, publikey, privatekey, hash of the digital identity
         const user = new User({
-            username: 'juan',
-            password: 'asdqwe123',
+            username: req.body.username,
+            password: req.body.password,
             wallet_address: data[0].walletAddress,
             publicKey: data[0].publicKey,
             privateKey: data[0].privateKey,
@@ -227,6 +238,8 @@ router.post('/register', (req, res) => {
 });
 
 module.exports = router;
+
+// Transfer assets
 
 
 // my assets / ballance

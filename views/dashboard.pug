@@ -62,7 +62,7 @@ html(lang='en')
       table.striped.highlight.z-depth-2
         thead
           tr
-            th Account
+            th Recipient
             th Date
             th Message
             th Type
@@ -74,7 +74,7 @@ html(lang='en')
             td= item.timeStamp
             td= item.message
             td= item.txType
-            td= item.amount
+            td #{item.amount} XEM
     //- // footer
     //- #footer
     include ./include/footer.pug

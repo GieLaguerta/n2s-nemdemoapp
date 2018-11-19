@@ -5,6 +5,10 @@ table.striped {
     border-radius: 5px;
 }
 
+table {
+    width: 90%;
+}
+
 .nav {
     margin-bottom: 50px;
 }

@@ -17,50 +17,137 @@ html(lang='en')
     include ./include/nav.pug
     
     main
+
+    .col.s6
+  .card.z-depth-3(style='padding: 35px;')
+    .row
+      .card-title
+        blockquote.flow-text
+          b User information
+        p
+          | Welcome, 
+          span
+            b  #{userInfo.name}!
+        p
+          | Wallet address:
+          span
+            b  #{userInfo.wallet_address}
+
+.row
+  .col.s12
+    .card.z-depth-3(style='padding: 35px;', align='center')
       .row
-        .col.s6
-          .card.z-depth-3(style='padding: 35px;', align='center')
+        .left.card-title
+          blockquote My Account
+      .row
+        a(href='#!')
+          .grey.lighten-3.col.s3.waves-effect(style='padding: 30px;')
+            i.indigo-text.text-lighten-1.large.material-icons format_bold
+            span.indigo-text.text-lighten-1
+              //-h5 Balance
+              each item in dataTx
+                h5 #{item.accountBalance} XEM
+        //
+          <div class="col s1">&nbsp;</div>
+          <div class="col s1">&nbsp;</div>
+        .col.s1  
+        a.modal-trigger(href='#remit')
+          .grey.lighten-3.col.s3.waves-effect(style='padding: 30px;')
+            i.indigo-text.text-lighten-1.large.material-icons monetization_on
+            span.indigo-text.text-lighten-1
+              h5 Cash out
+        // modal remit
+        #remit.modal
+          .modal-content
+            h4 Choose remittance center
+            br
+            br
             .row
-              .left.card-title
-                b.flow-text Welcome, #{userInfo.name}
-                br
-                | Wallet Address: #{userInfo.wallet_address}
+              .col.s3
+                a.modal-trigger(href='#remittance')
+                  img(src='/img/Cebuana.jpg', alt='')
+              .col.s1
+              .col.s3
+                a.modal-trigger(href='#remittance')
+                  img(src='/img/mlhuillier.jpg', alt='')
+              .col.s1
+              .col.s3
+                a.modal-trigger(href='#remittance')
+                  img(src='/img/palawan.png', alt='')
+          .modal-footer
+            a.modal-close.waves-effect.waves-green.btn-flat(href='#!') Agree
+        // modal remit end
+        // choose remit
+        #remittance.modal
+          .modal-content
+            h4 Cash out
+            br
+            br
             .row
-              a(href='#!')
-                .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')
-                  span.indigo-text.text-lighten-1
-                    each item in dataTx
-                       h5 #{item.accountBalance} XEM
-                  span.indigo-text.text-lighten-1
-                    each item in dataTx
-                       h5 Balance
-              .col.s1  
-              a(href='#!')
-                .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')
-                  span.indigo-text.text-lighten-1
-                    each item in dataMosaic
-                      h5 #{item.userMosaic.namespaceId}
-                      h5 #{item.userMosaic.name}
-                  span.indigo-text.text-lighten-1
-                    h5 My Asset
-        .col.s6
-          .card.z-depth-3(style='padding: 35px;', align='center')
-            .row
-              .left.card-title
-                b Product Management
-            .row
-              a(href='#!')
-                .grey.lighten-3.col.s5.waves-effect(style='padding: 30px;')
-                  i.indigo-text.text-lighten-1.large.material-icons store
-                  span.indigo-text.text-lighten-1
-                    h5 Product
-              .col.s1  
-              .col.s1  
-              a(href='#!')
-                .grey.lighten-3.col.s5.waves-effect(style='padding: 30px;')
-                  i.indigo-text.text-lighten-1.large.material-icons assignment
-                  span.indigo-text.text-lighten-1
-                    h5 Orders
+              .input-field.col.s6
+                .input-field
+                  input#amount.validate(type='number')
+                  label(for='amount') Enter Amount
+              .col.s3
+                a.waves-effect.waves-light.btn.btnSub
+                  i.material-icons.right send
+                  | submit
+          .modal-footer
+            a.modal-close.waves-effect.waves-green.btn-flat(href='#!') Agree
+        .col.s1  
+        a.modal-trigger(href='#')
+          .grey.lighten-3.col.s3.waves-effect(style='padding: 30px;')
+            span.indigo-text.text-lighten-1
+              h5
+                b Asset
+                  each item in dataMosaic
+                    h5 #{item.userMosaic.namespaceId}
+                    h5 #{item.userMosaic.name}
+
+      //- .row
+      //-   .col.s6
+      //-     .card.z-depth-3(style='padding: 35px;', align='center')
+      //-       .row
+      //-         .left.card-title
+      //-           b.flow-text Welcome, #{userInfo.name}
+      //-           br
+      //-           | Wallet Address: #{userInfo.wallet_address}
+      //-       .row
+      //-         a(href='#!')
+      //-           .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')
+      //-             span.indigo-text.text-lighten-1
+      //-               each item in dataTx
+      //-                  h5 #{item.accountBalance} XEM
+      //-             span.indigo-text.text-lighten-1
+      //-               each item in dataTx
+      //-                  h5 Balance
+      //-         .col.s1  
+      //-         a(href='#!')
+      //-           .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')
+      //-             span.indigo-text.text-lighten-1
+      //-               each item in dataMosaic
+      //-                 h5 #{item.userMosaic.namespaceId}
+      //-                 h5 #{item.userMosaic.name}
+      //-             span.indigo-text.text-lighten-1
+      //-               h5 My Asset
+      //-   .col.s6
+      //-     .card.z-depth-3(style='padding: 35px;', align='center')
+      //-       .row
+      //-         .left.card-title
+      //-           b Product Management
+      //-       .row
+      //-         a(href='#!')
+      //-           .grey.lighten-3.col.s5.waves-effect(style='padding: 30px;')
+      //-             i.indigo-text.text-lighten-1.large.material-icons store
+      //-             span.indigo-text.text-lighten-1
+      //-               h5 Product
+      //-         .col.s1  
+      //-         .col.s1  
+      //-         a(href='#!')
+      //-           .grey.lighten-3.col.s5.waves-effect(style='padding: 30px;')
+      //-             i.indigo-text.text-lighten-1.large.material-icons assignment
+      //-             span.indigo-text.text-lighten-1
+      //-               h5 Orders
       blockquote.flow-text Transaction History
       table.striped.highlight.z-depth-2
         thead
@@ -79,7 +166,7 @@ html(lang='en')
             td= item.txType
             td #{item.amount} XEM
     //- // footer
-    //- #footer
+    #footer
     include ./include/footer.pug
     script.
       // sidebar

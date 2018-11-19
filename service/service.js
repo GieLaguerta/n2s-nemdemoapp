@@ -35,7 +35,8 @@ router.post('/account/dashboard', (req, res) => {
 
         // fetch all transactions of account
         nem.com.requests.account.transactions.all(endpoint, userWalletAddress).then(function(result) {
-            //const message = result.data[0].transaction.message.payload;
+            //const message = result.data[0].transaction;
+            //console.log(result);
 
             /*data.push({
                 username,
@@ -75,7 +76,7 @@ router.post('/account/dashboard', (req, res) => {
 
                    nem.com.requests.account.mosaics.owned(endpoint, userWalletAddress).then(function(result) {
                        let dataMosaic = [];
-                        //console.log(result.data[1]);
+                        console.log(result.data[1]);
                         dataMosaic.push({
                             userMosaic: result.data[1].mosaicId
                         });
@@ -148,25 +149,37 @@ router.get('/account/dashboard', (req, res) => {
 //Todo: Apply loan confrmation depends the value of the collateral
 
 router.post('/transfer', (req, res, next) => {
-    const transferTransaction = nem.model.objects.create(
-        'transferTransaction')(
-            req.body.address,
-            req.body.amount,
-            req.body.message
-    );
+    User.findOne({wallet_address: req.body.my_address},function(err, result) {
+        const pKey = result.get('privateKey');
+        const pk = nem.utils.format.hexMessage(pKey);
+        const walletPass = result.get('password');
+        console.log(pKey)
 
-    const transactionEntity = nem.model.transactions.prepare(
-        'transferTransaction')(
-            common,
-            transferTransaction,
-            nem.model.network.data.testnet.id
-    );
-
-    nem.model.transactions.send(common, transactionEntity, endpoint).then(function(result) {
-        //console.log(res);
-         res.render('index.pug');
-    }, function(err) {
-        console.log(err);
+        const transferCommon = nem.model.objects.create('common')(
+            pk,
+            walletPass
+        );
+        const transferTransaction = nem.model.objects.create(
+            'transferTransaction')(
+                req.body.recipient,
+                req.body.amount,
+                req.body.message
+        );
+    
+        const transactionEntity = nem.model.transactions.prepare(
+            'transferTransaction')(
+                transferCommon,
+                transferTransaction,
+                nem.model.network.data.testnet.id
+        );
+    
+        nem.model.transactions.send(transferCommon, transactionEntity, endpoint).then(function(result) {
+            //console.log(res);
+            //res.render('index.pug');
+             res.json(result);
+        }, function(err) {
+            console.log(err);
+        });
     });
 });
 
@@ -221,8 +234,8 @@ router.post('/register', (req, res) => {
 
         // save user, password, wallet address, publikey, privatekey, hash of the digital identity
         const user = new User({
-            username: 'n2s',
-            password: 'n2s',
+            username: req.body.username,
+            password: req.body.password,
             wallet_address: data[0].walletAddress,
             publicKey: data[0].publicKey,
             privateKey: data[0].privateKey,

@@ -70,12 +70,17 @@ router.post('/account/dashboard', (req, res) => {
                 const searchEnabledEndpoint = nem.model.objects.create('endpoint')(nem.model.nodes.searchOnTestnet[0].uri, nem.model.nodes.defaultPort);
                 nem.com.requests.transaction.byHash(searchEnabledEndpoint, hash).then(function(result) {
                     const userInfo = JSON.parse(nem.utils.format.hexMessage(result.transaction.message));
-                    console.log(userInfo.wallet_address);
+                    console.log(userInfo);
                     const hashData = result.transaction.message.payload; // to decrypt for users id send to dashboard
 
-                    nem.com.requests.account.mosaics.owned(endpoint, userWalletAddress).then(function(result) {
-                        console.log(result.data[1]);
-                        res.render('dashboard.pug', { data: data, dataTx: dataTx , userInfo: userInfo});
+                   nem.com.requests.account.mosaics.owned(endpoint, userWalletAddress).then(function(result) {
+                       let dataMosaic = [];
+                        //console.log(result.data[1]);
+                        dataMosaic.push({
+                            userMosaic: result.data[1].mosaicId
+                        });
+                        console.log(dataMosaic);
+                        res.render('dashboard.pug', { data: data, dataTx: dataTx , userInfo: userInfo, dataMosaic: dataMosaic});
                     });
                 });
             });
@@ -216,8 +221,8 @@ router.post('/register', (req, res) => {
 
         // save user, password, wallet address, publikey, privatekey, hash of the digital identity
         const user = new User({
-            username: req.body.username,
-            password: req.body.password,
+            username: 'n2s',
+            password: 'n2s',
             wallet_address: data[0].walletAddress,
             publicKey: data[0].publicKey,
             privateKey: data[0].privateKey,

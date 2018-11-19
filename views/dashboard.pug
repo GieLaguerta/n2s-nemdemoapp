@@ -37,9 +37,12 @@ html(lang='en')
               .col.s1  
               a(href='#!')
                 .grey.lighten-3.col.s4.waves-effect(style='padding: 30px;')
-                  i.indigo-text.text-lighten-1.large.material-icons people
                   span.indigo-text.text-lighten-1
-                    h5 Customer
+                    each item in dataMosaic
+                      h5 #{item.userMosaic.namespaceId}
+                      h5 #{item.userMosaic.name}
+                  span.indigo-text.text-lighten-1
+                    h5 My Asset
         .col.s6
           .card.z-depth-3(style='padding: 35px;', align='center')
             .row
